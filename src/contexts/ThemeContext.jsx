@@ -8,7 +8,6 @@ const ThemeContext = createContext();
 
 /**
  * Custom hook for accessing the theme context.
- *
  * @returns {Object} The theme context value containing:
  * @returns {boolean} darkMode - Current theme state (true for dark mode, false for light mode)
  * @returns {Function} toggleTheme - Function to toggle between light and dark modes

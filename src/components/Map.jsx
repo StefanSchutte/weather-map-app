@@ -43,7 +43,6 @@ function MapEvents({ setPosition, setWeatherData, setError, setLoading }) {
 
 /**
  * Changes the map view when the center position changes.
- *
  * @param {Object} props - Component props
  * @param {Array<number>} props.center - Latitude and longitude to center the map
  */

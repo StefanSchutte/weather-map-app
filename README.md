@@ -1,4 +1,4 @@
-# Weather Map Application
+# Leaflet Weather Map 
 
 ## Overview
 A responsive React application that displays real-time weather information for any location on an interactive map. Users can click on the map or search for cities to get detailed weather data from the OpenWeatherMap API.
@@ -13,17 +13,17 @@ A responsive React application that displays real-time weather information for a
 
 ## Technologies Used
 - React
-- Vite (for fast development environment)
+- Vite
 - React Leaflet (map component)
 - OpenWeatherMap API (weather data)
 - Axios (for API requests)
 - Context API (for theme management)
-- CSS (with responsive design)
+- CSS 
 
 ## Prerequisites
 - Node.js (v14 or higher)
 - npm or yarn
-- OpenWeatherMap API key (free tier available)
+- OpenWeatherMap API key 
 
 ## Installation and Setup
 
@@ -93,13 +93,6 @@ A responsive React application that displays real-time weather information for a
 - The OpenWeatherMap free tier (1,000 API calls/day) is sufficient for personal use
 - Users may grant or deny location access in their browser
 - A stable internet connection is required for fetching map tiles and weather data
-
-## Future Improvements
-- Weather forecast for upcoming days
-- Historical weather data visualization
-- Multiple weather data providers
-- Customizable units (metric/imperial)
-- Saving favorite locations
 
 ## Acknowledgements
 - [OpenWeatherMap](https://openweathermap.org/) for the weather data API

@@ -8,14 +8,12 @@ const API_KEY = import.meta.env.VITE_OPENWEATHERMAP_API_KEY;
 
 /**
  * SearchBar component for searching city weather data with support for multiple cities with the same name.
- *
  * @component
  * @param {Object} props - Component props.
  * @param {Function} props.setPosition - Function to update the map position ([lat, lon]).
  * @param {Function} props.setWeatherData - Function to update the weather data state.
  * @param {Function} props.setError - Function to set error messages.
  * @param {Function} props.setLoading - Function to set the loading state.
- *
  * @returns {JSX.Element} A form with an input field, search button, and city selection dropdown when applicable.
  */
 function SearchBar({ setPosition, setWeatherData, setError, setLoading }) {
@@ -27,7 +25,6 @@ function SearchBar({ setPosition, setWeatherData, setError, setLoading }) {
 
     /**
      * Handles city search submission.
-     *
      * @param {React.FormEvent} e - The form submit event.
      */
     const handleSearch = async (e) => {
@@ -76,7 +73,6 @@ function SearchBar({ setPosition, setWeatherData, setError, setLoading }) {
 
     /**
      * Handles city selection from the dropdown.
-     *
      * @param {Object} city - The selected city object.
      */
     const handleCitySelect = async (city) => {
