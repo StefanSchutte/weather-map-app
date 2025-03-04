@@ -467,7 +467,7 @@ body.dark-mode .spinner {
 }
 
 /* Tablet Styles */
-@media (min-width: 769px) and (max-width: 1024px) {
+@media (max-width: 869px) {
   .content {
     flex-direction: column;
   }
