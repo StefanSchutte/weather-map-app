@@ -24,7 +24,6 @@ function WeatherInfo({ weatherData, error, loading }) {
 
     if (error) {
         return <div className={`weather-info error ${darkMode ? 'dark' : ''}`}>
-            <h3>Error</h3>
             <p>{error}</p>
         </div>;
     }
@@ -39,7 +38,7 @@ function WeatherInfo({ weatherData, error, loading }) {
 
     return (
         <div className={`weather-info ${darkMode ? 'dark' : ''}`}>
-            <h2>{weatherData.name || 'Unknown Location'}</h2>
+            <h2 >{weatherData.name || 'Unknown Location'}</h2>
             <div className="weather-icon-container">
                 <img
                     src={iconUrl}
