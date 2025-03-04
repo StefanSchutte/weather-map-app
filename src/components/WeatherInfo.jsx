@@ -1,18 +1,41 @@
 import { useTheme } from '../contexts/ThemeContext';
 import LoadingSpinner from './LoadingSpinner';
+import ForecastModal from './ForecastModal';
+import { fetchForecastData } from '../services/weatherService';
+import { useState } from 'react';
 
 /**
  * Displays weather information based on data fetched from OpenWeatherMap API.
- * Renders different UI states based on loading, error, and data availability.
+ * Handles loading, error, and data states and allows users to view a 5-day weather forecast.
  * @component
- * @param {Object} props - Component props
- * @param {Object|null} props.weatherData - Weather data from OpenWeatherMap API
- * @param {string|null} props.error - Error message if API request failed
- * @param {boolean} props.loading - Loading state indicator
- * @returns {JSX.Element} The rendered WeatherInfo component
+ * @param {Object} props - The component props
+ * @param {Object|null} props.weatherData - Weather data from OpenWeatherMap API (null if no data available)
+ * @param {string|null} props.error - Error message if API request failed (null if no error)
+ * @param {boolean} props.loading - Boolean indicating whether weather data is being fetched
+ * @returns {JSX.Element} The rendered WeatherInfo component, which displays the current weather and a button to view the 5-day forecast
  */
 function WeatherInfo({ weatherData, error, loading }) {
     const { darkMode } = useTheme();
+    const [forecastData, setForecastData] = useState(null);
+    const [forecastLoading, setForecastLoading] = useState(false);
+    const [forecastError, setForecastError] = useState(null);
+    const [showForecastModal, setShowForecastModal] = useState(false);
+
+    /**
+     * Fetches the 5-day weather forecast based on the latitude and longitude of the current weather data.
+     * Updates the component's state with forecast data, loading state, or error.
+     */
+    const handleFetchForecast = async () => {
+        if (!weatherData?.coord) return;
+
+        const { lat, lon } = weatherData.coord;
+        try {
+            await fetchForecastData(lat, lon, setForecastData, setForecastError, setForecastLoading);
+            setShowForecastModal(true);
+        } catch (err) {
+            console.error('Error fetching forecast:', err);
+        }
+    };
 
     if (loading) {
         return (
@@ -23,22 +46,26 @@ function WeatherInfo({ weatherData, error, loading }) {
     }
 
     if (error) {
-        return <div className={`weather-info error ${darkMode ? 'dark' : ''}`}>
-            <p>{error}</p>
-        </div>;
+        return (
+            <div className={`weather-info error ${darkMode ? 'dark' : ''}`}>
+                <p>{error}</p>
+            </div>
+        );
     }
 
     if (!weatherData) {
-        return <div className={`weather-info ${darkMode ? 'dark' : ''}`}>
-            <p>Click on the map to see weather details</p>
-        </div>;
+        return (
+            <div className={`weather-info ${darkMode ? 'dark' : ''}`}>
+                <p>Click on the map to see weather details</p>
+            </div>
+        );
     }
 
     const iconUrl = `https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`;
 
     return (
         <div className={`weather-info ${darkMode ? 'dark' : ''}`}>
-            <h2 >{weatherData.name || 'Unknown Location'}</h2>
+            <h2>{weatherData.name || 'Unknown Location'}</h2>
             <div className="weather-icon-container">
                 <img
                     src={iconUrl}
@@ -80,6 +107,22 @@ function WeatherInfo({ weatherData, error, loading }) {
             <div className="coordinates">
                 <small>Lat: {weatherData.coord.lat.toFixed(4)}, Lon: {weatherData.coord.lon.toFixed(4)}</small>
             </div>
+
+            <button
+                onClick={handleFetchForecast}
+                className={`forecast-button ${darkMode ? 'dark' : ''}`}
+            >
+                View 5-Day Forecast
+            </button>
+
+            {showForecastModal && (
+                <ForecastModal
+                    forecastData={forecastData}
+                    onClose={() => setShowForecastModal(false)}
+                    error={forecastError}
+                    loading={forecastLoading}
+                />
+            )}
         </div>
     );
 }
