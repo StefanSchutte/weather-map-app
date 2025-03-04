@@ -3,6 +3,9 @@
 ## Overview
 A responsive React application that displays real-time weather information for any location on an interactive map. Users can click on the map or search for cities to get detailed weather data from the OpenWeatherMap API.
 
+## Deployed Site
+[Deployed on Vercel](https://weather-map-app-nine.vercel.app/)
+
 ## Features
 - Interactive map using React Leaflet with both light and dark themes
 - Real-time weather data display with temperature, conditions, humidity, wind speed, etc.
