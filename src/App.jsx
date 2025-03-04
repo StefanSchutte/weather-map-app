@@ -45,6 +45,7 @@ function App() {
                             position={position}
                             setPosition={setPosition}
                             setWeatherData={setWeatherData}
+                            weatherData={weatherData}
                             setError={setError}
                             setLoading={setLoading}
                         />

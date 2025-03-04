@@ -35,7 +35,6 @@ function MapEvents({ setPosition, setWeatherData, setError, setLoading }) {
                 await fetchWeatherData(lat, lng, setWeatherData, setError, setLoading);
             } catch (err) {
                 toast.error(`Error fetching weather data: ${err.message}`);
-
             }
         },
     });
@@ -63,8 +62,9 @@ function ChangeView({ center }) {
  * @param {Function} props.setWeatherData - Function to set weather data
  * @param {Function} props.setError - Function to set error messages
  * @param {Function} props.setLoading - Function to toggle loading state
+ * @param {Object} props.weatherData - Weather data from the API
  */
-function Map({ position, setPosition, setWeatherData, setError, setLoading }) {
+function Map({ position, setPosition, setWeatherData, setError, setLoading, weatherData }) {
     const { darkMode } = useTheme();
     const [geolocating, setGeolocating] = useState(true);
 
@@ -90,7 +90,6 @@ function Map({ position, setPosition, setWeatherData, setError, setLoading }) {
                             await fetchWeatherData(DEFAULT_POSITION[0], DEFAULT_POSITION[1], setWeatherData, setError, setLoading);
                         } catch (err) {
                             toast.error(`Error fetching weather data for default location: ${err.message}`);
-
                         }
                         setGeolocating(false);
                     },
@@ -118,6 +117,8 @@ function Map({ position, setPosition, setWeatherData, setError, setLoading }) {
     const attribution = darkMode
         ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
+    const cityName = weatherData?.name || 'Unknown Location';
 
     return (
         <div style={{ height: '100%', width: '100%', position: 'relative' }}>
@@ -153,7 +154,7 @@ function Map({ position, setPosition, setWeatherData, setError, setLoading }) {
                 {position && (
                     <Marker position={position} icon={customMarkerIcon}>
                         <Popup>
-                            Selected Location <br />
+                            <strong>{cityName}</strong><br />
                             Lat: {position[0].toFixed(4)}, Lng: {position[1].toFixed(4)}
                         </Popup>
                     </Marker>
