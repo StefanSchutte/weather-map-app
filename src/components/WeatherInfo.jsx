@@ -3,6 +3,7 @@ import LoadingSpinner from './LoadingSpinner';
 import ForecastModal from './ForecastModal';
 import { fetchForecastData } from '../services/weatherService';
 import { useState } from 'react';
+import {toast} from "react-toastify";
 
 /**
  * Displays weather information based on data fetched from OpenWeatherMap API.
@@ -33,6 +34,7 @@ function WeatherInfo({ weatherData, error, loading }) {
             await fetchForecastData(lat, lon, setForecastData, setForecastError, setForecastLoading);
             setShowForecastModal(true);
         } catch (err) {
+            toast.error(`Error fetching forecast: ${err.message}`);
             console.error('Error fetching forecast:', err);
         }
     };
