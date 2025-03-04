@@ -10,6 +10,7 @@ A responsive React application that displays real-time weather information for a
 - City search functionality
 - Responsive design for desktop, tablet, and mobile devices
 - Light/dark mode toggle with persistent user preference
+- 5-day weather forecast modal, showing detailed forecast for the selected location
 
 ## Technologies Used
 - React
@@ -19,6 +20,7 @@ A responsive React application that displays real-time weather information for a
 - Axios (for API requests)
 - Context API (for theme management)
 - CSS 
+- Chart.js
 
 ## Prerequisites
 - Node.js (v14 or higher)
