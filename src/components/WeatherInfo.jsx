@@ -1,6 +1,16 @@
 import { useTheme } from '../contexts/ThemeContext';
 import LoadingSpinner from './LoadingSpinner';
 
+/**
+ * Displays weather information based on data fetched from OpenWeatherMap API.
+ * Renders different UI states based on loading, error, and data availability.
+ * @component
+ * @param {Object} props - Component props
+ * @param {Object|null} props.weatherData - Weather data from OpenWeatherMap API
+ * @param {string|null} props.error - Error message if API request failed
+ * @param {boolean} props.loading - Loading state indicator
+ * @returns {JSX.Element} The rendered WeatherInfo component
+ */
 function WeatherInfo({ weatherData, error, loading }) {
     const { darkMode } = useTheme();
 

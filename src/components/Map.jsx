@@ -1,14 +1,14 @@
 import { MapContainer, TileLayer, useMapEvents, useMap, Marker, Popup } from 'react-leaflet';
 import { useTheme } from '../contexts/ThemeContext';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 import { icon } from 'leaflet';
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
 import 'leaflet-defaulticon-compatibility';
+import { fetchWeatherData } from '../services/weatherService';
+import { toast } from 'react-toastify';
 
-const API_KEY = import.meta.env.VITE_OPENWEATHERMAP_API_KEY;
-const DEFAULT_POSITION = [-25.7458, 28.1859]; // Pretoria, South Africa
+const DEFAULT_POSITION = [-25.7458, 28.1859]; // Pretoria
 /** Custom marker icon with adjusted size and anchor points */
 const customMarkerIcon = icon({
     iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
@@ -31,7 +31,12 @@ function MapEvents({ setPosition, setWeatherData, setError, setLoading }) {
         click: async (e) => {
             const { lat, lng } = e.latlng;
             setPosition([lat, lng]);
-            fetchWeatherData(lat, lng, setWeatherData, setError, setLoading);
+            try {
+                await fetchWeatherData(lat, lng, setWeatherData, setError, setLoading);
+            } catch (err) {
+                toast.error(`Error fetching weather data: ${err.message}`);
+
+            }
         },
     });
     return null;
@@ -45,34 +50,9 @@ function MapEvents({ setPosition, setWeatherData, setError, setLoading }) {
  */
 function ChangeView({ center }) {
     const map = useMap();
-    map.setView(center, 13);
+    const currentZoom = map.getZoom();
+    map.setView(center, currentZoom);
     return null;
-}
-
-/**
- * Fetches weather data from the OpenWeatherMap API.
- *
- * @param {number} lat - Latitude of the location
- * @param {number} lng - Longitude of the location
- * @param {Function} setWeatherData - Function to set weather data
- * @param {Function} setError - Function to set error messages
- * @param {Function} setLoading - Function to toggle loading state
- */
-export async function fetchWeatherData(lat, lng, setWeatherData, setError, setLoading) {
-    setLoading(true);
-    try {
-        const response = await axios.get(
-            `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${API_KEY}&units=metric`
-        );
-        setWeatherData(response.data);
-        setError(null);
-    } catch (err) {
-        console.error('API Error:', err);
-        setError(err.response?.data?.message || 'Failed to fetch weather data');
-        setWeatherData(null);
-    } finally {
-        setLoading(false);
-    }
 }
 
 /**
@@ -89,30 +69,46 @@ function Map({ position, setPosition, setWeatherData, setError, setLoading }) {
     const [geolocating, setGeolocating] = useState(true);
 
     useEffect(() => {
-        if (navigator.geolocation) {
-            setGeolocating(true);
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    setPosition([latitude, longitude]);
-                    fetchWeatherData(latitude, longitude, setWeatherData, setError, setLoading);
-                    setGeolocating(false);
-                },
-                (error) => {
-                    console.error('Geolocation error:', error);
+        const initializeMap = async () => {
+            if (navigator.geolocation) {
+                setGeolocating(true);
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        const { latitude, longitude } = position.coords;
+                        setPosition([latitude, longitude]);
+                        try {
+                            await fetchWeatherData(latitude, longitude, setWeatherData, setError, setLoading);
+                        } catch (err) {
+                            toast.error(`Error fetching weather data for your location: ${err.message}`);
+                        }
+                        setGeolocating(false);
+                    },
+                    async (error) => {
+                        console.error('Geolocation error:', error);
+                        setPosition(DEFAULT_POSITION);
+                        try {
+                            await fetchWeatherData(DEFAULT_POSITION[0], DEFAULT_POSITION[1], setWeatherData, setError, setLoading);
+                        } catch (err) {
+                            toast.error(`Error fetching weather data for default location: ${err.message}`);
 
-                    setPosition(DEFAULT_POSITION);
-                    fetchWeatherData(DEFAULT_POSITION[0], DEFAULT_POSITION[1], setWeatherData, setError, setLoading);
-                    setGeolocating(false);
-                },
-                { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-            );
-        } else {
-            setError('Geolocation is not supported by your browser');
-            setPosition(DEFAULT_POSITION);
-            fetchWeatherData(DEFAULT_POSITION[0], DEFAULT_POSITION[1], setWeatherData, setError, setLoading);
-            setGeolocating(false);
-        }
+                        }
+                        setGeolocating(false);
+                    },
+                    { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+                );
+            } else {
+                setError('Geolocation is not supported by your browser');
+                setPosition(DEFAULT_POSITION);
+                try {
+                    await fetchWeatherData(DEFAULT_POSITION[0], DEFAULT_POSITION[1], setWeatherData, setError, setLoading);
+                } catch (err) {
+                    toast.error(`Error fetching weather data for default location: ${err.message}`);
+                }
+                setGeolocating(false);
+            }
+        };
+
+        initializeMap();
     }, [setPosition, setWeatherData, setError, setLoading]);
 
     const tileUrl = darkMode
@@ -143,11 +139,15 @@ function Map({ position, setPosition, setWeatherData, setError, setLoading }) {
             <MapContainer
                 center={position || DEFAULT_POSITION}
                 zoom={13}
+                minZoom={2}
                 style={{ height: '100%', width: '100%' }}
+                maxBounds={[[-90, -180], [90, 180]]}
+                maxBoundsViscosity={1.0}
             >
                 <TileLayer
                     url={tileUrl}
                     attribution={attribution}
+                    noWrap={true}
                 />
                 <ChangeView center={position || DEFAULT_POSITION} />
                 {position && (

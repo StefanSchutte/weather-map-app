@@ -5,14 +5,15 @@ import WeatherInfo from './components/WeatherInfo';
 import SearchBar from './components/SearchBar';
 import ThemeToggle from './components/ThemeToggle';
 import './App.css';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
     const [weatherData, setWeatherData] = useState(null);
-    const [position, setPosition] = useState([51.505, -0.09]); // Default: London
+    const [position, setPosition] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    // Reset error when position changes
     useEffect(() => {
         setError(null);
     }, [position]);
@@ -27,16 +28,15 @@ function App() {
                             alt="Seasons"
                             className="logo"
                         />
-                        Weather Map Leaflet
+                        Leaflet Weather Map
                     </h1>
-                    <div className="header-controls">
+                    <div className="header-right">
                         <SearchBar
                             setPosition={setPosition}
                             setWeatherData={setWeatherData}
                             setError={setError}
                             setLoading={setLoading}
                         />
-                        <ThemeToggle />
                     </div>
                 </div>
                 <div className="content">
@@ -57,6 +57,22 @@ function App() {
                         />
                     </div>
                 </div>
+                <div className="theme-toggle-container">
+                    <ThemeToggle />
+                </div>
+                {/* Toast Container */}
+                <ToastContainer
+                    position="top-right"
+                    autoClose={5000}
+                    hideProgressBar={false}
+                    newestOnTop
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    theme="dark"
+                />
             </div>
         </ThemeProvider>
     );

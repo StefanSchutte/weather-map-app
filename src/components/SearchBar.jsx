@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useTheme } from '../contexts/ThemeContext';
-import { fetchWeatherData } from './Map';
+import { fetchWeatherData } from '../services/weatherService.js';
 
 const API_KEY = import.meta.env.VITE_OPENWEATHERMAP_API_KEY;
 
